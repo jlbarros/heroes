@@ -1,3 +1,11 @@
+Desplegar una lista de heroes:
+    ✔ Crear un mock de heroes. @done(19-01-28 18:26)
+    ☐ Presentar la lista de heros.
+    ☐ Dar un estilo a la lista de heroes.
+    ☐ Presenta un maestro/detalle de los heroes.
+    ☐ Ocultar detalles vacíos.
+    ☐ Darle un estilo a un heroe seleccionado.
+
 Edit Hero:
     ✔ Formulario de edición de héroes @done(19-01-28 15:57)
     ✔ Importar FormsModule @done(19-01-28 15:57)
