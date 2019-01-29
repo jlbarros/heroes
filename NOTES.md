@@ -1,42 +1,50 @@
-## [0.0.1] 28-ENE-2019: 16:02
+## [0.0.3] 29-ENE-2019: 14:24
 
-### Crear un mock de heroes
-Eventualmente, los datos se obtienen desde un servidor remoto. Por ahora, crearemos un mock de heroes, y pretenderemos que vienen de un servidor.
+### Maestro/Detalle
+Cuando el usuario hace clic en la lista maestra, el componente debe desplegar el detalle del héroe seleccionado en la parte de abajo de la página.
 
-Crear un archivo `mock-heroes.ts` en `src/app/`.
+#### Adicionar un link de evento click
+En la vista `heroes.component.html` se agrega al elemento `<li>` el link al evento click:
 
-En dicho archivo se crea una constante HEROES que contiene un array con los heroes que usaremos. Para usarlos debemos exportarlos.
+`<li *ngFor="let hero of heroes" (click)="onSelect(hero)">`
 
-### Desplegar los heroes
-#### Modificar el componente heroes
-En el archivo `src/app/heroes/heroes.component.ts` se importa HEROES.
+El paréntesis alrededor de `click` le dice a Angular que escuche el evento `click` en los elemetos `<li>`. Cuando el usuario hace click en un elemento `<li>`, Angular ejecuta la expresión `onSelect(hero)`.
 
-Igualmente, en dicho archivo se modifica la clase HeroesComponent 
-para que ahora use nuestro mock de heroes.
+`onSelect(hero)` es un método de `HeroesComponent` que tienes que escribir. Angular llama a este método con el objeto `hero`, el mismo `hero` definido previamente en la expresión del `*ngFor`.
 
-#### Modificar la plantilla del componente heroes
-Se modifica el archivo `heroes.component.html` para presentar una lista de heroes de nuestro mock.
+#### Adicionar un manejador del evento click
 
-Para ello se hace uso de la directiva `ngFor` la cual es un repetidor. Es decir, repite el elemento huesped por cada elemento en una lista.
+Debemos crear una propiedad que mantenga en el componente el héroe seleccionado y además un método para seleccionar un héroe.
 
-En este caso:
-* `<li>` es el elemento huesped
-* `heroes` es la lista
-* `hero` es el actual objeto por cada iteración a través de la lista.
+#### Actualizar la vista para presentar los detalles
+Debajo de la lista de héroes ya presentada se deben presentar los detalles del héroe seleccionado.
 
-En este punto, es un buen momento para apreciar nuestro trabajo:
+Para ello, agregamos a la plantilla, el código HTML necesario.
 
-`> ng server --open`
+Sin embargo, una vez actualizada la plantilla, si refrescamos el explorador, vemos que la lista no se ve adecuadamente. Si buscamos en la consola descubriremos que se genera un error; `Cannot read property 'name' of undefined`.
 
-#### Dando estilo a los heroes
-Se puede adicionar más estilos a `style.css` haciendo crecer todo lo que desees este archivo a medida que creas más componentes. 
+Si hacemos click en la lista, la aplicación vuelve a funcionar correctamente.
 
-Pero es mejor definir estilos privados para un componente y mantener todo lo que el componente necesita (el código, HTML y CSS) junto en un solo lugar.
+Lo que ocurre es `selectedHero` no está aún establecido cuando inicia la aplicación.
 
-Este enfoque hace que sea más fácil reutilizar el componente en otro lugar y entregar el aspecto deseado del componente incluso si los estilos globales son diferentes.
+La aplicación sólo debería presentar los detalles de un héroe cuando dicho héroe haya sido seleccionado.
 
-Cuando se CLI generó el `HeroesComponent`, creó un `heroes.component.css` para dicho componente y apuntó `styleUrls` a dicho archivo.
+Debemos encerrar el código HTML dentro de un `<div>` condicionado. Para ello utilizaremos la directiva `*ngIf` que nos permite ocultar lo que está dentro del `<div>` de acuerdo a una condición.
 
-Entonces, sólo necesitamos entrar al archivo `heroes.component.css` y pegar allí los estilos que usaremos para este componente.
+Con este ajuste, la aplicación ya queda funcionando correctamente.
 
-`> ng server --open`
+#### Dando un estilo al héroe seleccionado
+No queda claro en la lista de héroes, cuál es el héroe seleccionado. El héroe seleccionado debería tener un color o algo distintivo.
+
+El estilo que necesitamos ya lo tenemos en la hoja de estilo del componente. Sólo debemos usarlo en nuestra vista. Para ello, usaremos la capacidad que tiene Angular de alternar el uso de una clase CSS de acuerdo a una condición dada, en este caso, que el elemento `<li>` sea el del héroe seleccionado.
+
+----
+
+### Resumen
+* La aplicación ahora despliega una lista de héroes y un maestro/detalle del héroe seleccionado.
+* El usuario puede seleccionar un héroe y ver sus detalles.
+* Usamos `*ngFor` para desplegar una lista.
+* Usamos `*ngIf`para incluir o excluir un bloque HTML según una condición dada.
+* Podemos alternar la aplicación de una clase de estilo CSS de acuerdo con una condición dada.
+
+----

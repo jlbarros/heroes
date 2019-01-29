@@ -1,5 +1,9 @@
 # Tour of Heroes
 ----
+## [0.0.3] 29-ENE-2019: 14:24
+### [Added]
+* Presenta una lista de héroes maestro/detalle. Cuando el usuario selecciona un héroe de la lista, este queda resaltado y se presentan sus detalles en la parte inferior de la página.
+
 
 ## [0.0.2] 28-ENE-2019: 20:20
 ### [Removed]

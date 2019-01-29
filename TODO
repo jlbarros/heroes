@@ -1,10 +1,10 @@
 Desplegar una lista de heroes:
     ✔ Crear un mock de heroes. @done(19-01-28 18:26)
-    ☐ Presentar la lista de heros.
-    ☐ Dar un estilo a la lista de heroes.
-    ☐ Presenta un maestro/detalle de los heroes.
-    ☐ Ocultar detalles vacíos.
-    ☐ Darle un estilo a un heroe seleccionado.
+    ✔ Presentar la lista de heros. @done(19-01-29 13:38)
+    ✔ Dar un estilo a la lista de heroes. @done(19-01-29 13:39)
+    ✔ Presenta un maestro/detalle de los heroes. @done(19-01-29 13:55)
+    ✔ Ocultar detalles cuando no hay un héroe seleccionado. @done(19-01-29 13:55)
+    ✔ Darle un estilo a un heroe seleccionado. @done(19-01-29 14:11)
 
 Edit Hero:
     ✔ Formulario de edición de héroes @done(19-01-28 15:57)
