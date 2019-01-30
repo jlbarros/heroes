@@ -1,5 +1,14 @@
 # Tour of Heroes
 ----
+## [0.0.4] 29-ENE-2019: 19:54
+### [Modified]
+* El comportamiento de la aplicación no cambia. Internamente se divide en dos componentes, uno que presenta la lista de héroes y otro que presenta el detalle.
+
+### [Fixed]
+* Se arreglan los colores de estilo de la aplicación.
+
+----
+
 ## [0.0.3] 29-ENE-2019: 14:24
 ### [Added]
 * Presenta una lista de héroes maestro/detalle. Cuando el usuario selecciona un héroe de la lista, este queda resaltado y se presentan sus detalles en la parte inferior de la página.

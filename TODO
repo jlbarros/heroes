@@ -1,3 +1,9 @@
+Crear componente Maestro/Detalle:
+    ☐ Generar el componente
+    ☐ Modificar la vista del componente
+    ☐ Crear el formulario del componente
+    ☐ Crear la relación maestro/detalle entre componentes
+
 Desplegar una lista de heroes:
     ✔ Crear un mock de heroes. @done(19-01-28 18:26)
     ✔ Presentar la lista de heros. @done(19-01-29 13:38)
