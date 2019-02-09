@@ -1,18 +1,12 @@
-Crear componente Maestro/Detalle:
-    ☐ Generar el componente
-    ☐ Modificar la vista del componente
-    ☐ Crear el formulario del componente
-    ☐ Crear la relación maestro/detalle entre componentes
+Crear un servicio HeroService:
+    ✔ Generar el servicio @done(19-02-04 21:05)
+    ✔ Importar en el servicio la clase Hero @done(19-02-04 21:05)
+    ✔ Importar en el servicio el mock de Héroes @done(19-02-04 21:05)
+    ✔ Registrar el servicio @done(19-02-08 18:39)
 
-Desplegar una lista de heroes:
-    ✔ Crear un mock de heroes. @done(19-01-28 18:26)
-    ✔ Presentar la lista de heros. @done(19-01-29 13:38)
-    ✔ Dar un estilo a la lista de heroes. @done(19-01-29 13:39)
-    ✔ Presenta un maestro/detalle de los heroes. @done(19-01-29 13:55)
-    ✔ Ocultar detalles cuando no hay un héroe seleccionado. @done(19-01-29 13:55)
-    ✔ Darle un estilo a un heroe seleccionado. @done(19-01-29 14:11)
-
-Edit Hero:
-    ✔ Formulario de edición de héroes @done(19-01-28 15:57)
-    ✔ Importar FormsModule @done(19-01-28 15:57)
-    ✔ Declarar el HeroesComponent @done(19-01-28 15:57)
+Actualizar el componente HeroesComponent:
+    ✔ Borrar la importación de HEROES. @done(19-02-08 18:41)
+    ✔ Actualizar la definición de `heroes` para usar el servicio @done(19-02-08 18:42)
+    ✔ Inyectar el servicio `HeroService` en el constructor @done(19-02-08 18:43)
+    ✔ Adicionar un método `getHeroes()` @done(19-02-08 18:44)
+    ✔ Llamar el método `getHeroes()` desde `ngOnInit()` @done(19-02-08 19:04)
