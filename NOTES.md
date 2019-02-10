@@ -1,78 +1,113 @@
-## [0.0.5]
+## [0.0.6]
 
 ----
 
-### Servicios
-La aplicación actualmente despliega datos falsos.
+### Datos Observables
+El método `HeroService.getHeroes()` tiene una firma síncrona, lo que implica que `HeroService` puede obtener héroes de forma síncrona. `HeroesComponent` consume el resultado de `getHeroes()` como si los héroes se pudieran buscar de forma sincrónica.
 
-En este commit el `HeroesComponent` se simplifica buscan que se enfoque sólo en entregar información a la vista. Para ello crearemos un servicio simulado. Esto también facilitará las pruenas unitarias.
+Esto no funcionará en una aplicación real. Te estás saliendo con la tuya ahora porque el servicio actualmente devuelve héroes simulados. Pero pronto la aplicación buscará héroes desde un servidor remoto, que es una operación inherentemente asíncrona.
 
-#### ¿Por qué servicios?
-Los componentes no deben obtener o guardar datos directamente y, ciertamente, no deben presentar datos falsos a sabiendas. Deben centrarse en presentar datos y delegar el acceso de datos a un servicio.
+`HeroService` debe esperar a que el servidor responda, `getHeroes()` no puede regresar inmediatamente con datos de héroes, y el navegador se bloqueará mientras el servicio espera.
 
-Este commit, crea un `HeroService` que todas las clases de la aplicación podrán usar para obtener héroes.
+`HeroService.getHeroes()` debe tener una *firma asíncrona* de algún tipo.
 
-En lugar de crear instancias de ese servicio con la palabra reservada `new`, usa la inyección de dependencia de Angular para inyectarlo en el constructor `HeroesComponent`.
+De esta manera puede tomar una devolución de llamada (Callback). O podría devolver una *Promesa*. O tambien, podría devolver un *Observable*.
 
-Los servicios son una excelente manera de compartir información entre clases que no se conocen entre sí.
+En este tutorial, `HeroService.getHeroes()` devolverá un `Observable` en parte porque eventualmente usará el método Angular `HttpClient.get` para buscar a los héroes y `HttpClient.get()` devuelve un `Observable`.
 
-----
+#### Haciendo HeroService Observable
+`Observable` es una de las clases clave en la librería `RxJS`.
 
-#### Crear el servicio
-El servicio se genera así:
+En un tutorial posterior sobre HTTP, aprenderás que los métodos `HttpClient` de Angular devuelven RxJS Observables. En este tutorial, simularemos obtener datos del servidor con la función RxJS `of()`.
 
-`> ng generate service hero`
+Abre el archivo `HeroService` y has un `import` de los símbolos `Observable` y `of` RxJS.
 
-Esto generará la clase `HeroService` en `src/app/hero.service.ts`.
+El método `getHeroes()` se modifica para que retorne un `of(HEROES)`, Así, devuelve un `Observable<Hero[]>` que emite un único valor, la matriz de héroes simulados.
 
-El nuevo servicio importa el símbolo `Injectable` y anota la clase con el decorador `@Injectable`. Esto marca a la clase como una clase que participa en el *sistema de de inyección de dependencia*. `HeroService`va a proveer un servicio inyectable y puede también tener sus propias dependencias inyectadas.
+#### Modificar HeroesComponent para utilizar un servicio Observable
+El método `HeroService.getHeroes()` utilizado para devolver un `hero[]` ahora devuelve un `Observable<Hero[]>`.
 
-----
+Tenemos que modificar `HeroesComponent` para ajustarnos a esta diferencia.
 
-#### Obtener los datos de héroes
-`HeroService` podría obtener datos de héroes desde cualquier lugar: un servicio web, almacenamiento local o una fuente de datos simulada.
+`Observable.subscribe()` es la diferencia crítica.
 
-Eliminar de los componentes el acceso a los datos significa que podemos cambiar de opinión de la implementación en cualquier momento, sin tocar ningún componente. Ellos no saben cómo funciona el servicio.
+La versión anterior asigna un array de héroes a la propiedad `heroes` del componente. La asignación se realiza de forma sincrónica, como si el servidor pudiera devolver héroes al instante o el navegador pudiera congelar la interfaz de usuario mientras espera la respuesta del servidor.
 
-La implementación en este tutorial continuará entregando héroes simulados.
+Eso no funcionará cuando `HeroService` en realidad esté haciendo solicitudes a un servidor remoto.
 
-Así que importamos la clase `Hero` y el mock de héroes en `HeroService`.
+La nueva versión espera a que el `Observable` emita un array de héroes, lo que podría suceder ahora o dentro de unos minutos. Luego, la suscripción pasa el array emitido a la devolución de llamada, que establece la propiedad `heroes` del componente.
 
-----
-
-#### Proveer el servicio HeroService
-Debemos lograr que nuestro servicio esté para que Angular pueda inyectarlo en `HeroesComponent`. Para ello registramos un proveedor. Un proveedor es algo que puede crear o entregar un servicio; en este caso, crea una instancia de la clase `HeroService` para proporcionar el servicio.
-
-De manera predeterminada, Angular registra un proveedor con el *inyector root* para su servicio al incluir metadatos del proveedor en el decorador `@Injectable`.
-
-Si observa la instrucción `@Injectable()` justo antes de la definición de la clase `HeroService`, puede ver que el valor de metadatos provisto es `"root"`.
-
-Cuando proporciona el servicio en el nivel `root`, Angular crea una única instancia compartida de `HeroService` y la inyecta en cualquier clase que lo solicite. El registro del proveedor en los metadatos de @`Injectable` también permite que Angular optimice una aplicación eliminando el servicio si resulta que no se utiliza después de todo.
+Este enfoque asíncrono funcionará cuando `HeroService` solicite héroes del servidor.
 
 ----
 
-#### Actualizar HeroesComponent
-Eliminamos el `import` de `HEROES`, porque ya no es necesario. Lo cambiamos por un `import` de `HeroService`.
+### Mostrar mensajes
+En esta sección aprenderemos a:
 
-Cambiamos la definición de heroes:
+* Adicionar un `MessageComponent` que despliega mensajes de la aplicación en la parte inferior de la pantalla.
 
-`heroes: Hero[]`
+* Crea un `MessageService` inyectable y para enviar los mensajes que serán desplegados.
 
-##### Inyectar el servicio HeroService
+* Inyectar `MessageService` en `HeroService`.
 
-En el constructor adicionamos un parámetro de tipo `HeroService`.
+* Mostrar un mensaje cuando `HeroService` obtiene héroes con éxito.
 
-Este parámetro define simultáneamente una propiedad privada `heroService` y la establece como una inyección de `HeroService`.
+#### Crear MessageComponent
 
-Cuando Angula crea una instancia de `HeroesComponent` el sistema de inyección de dependencias crea una instancia singleton de `HeroService`.
+`ng generate component messages`
 
-##### Adicionar getHeroes()
-Creamos la función que retorna la lista de héroes.
+Luego de generado el componente es necesario modificar la vista de `AppComponent` para que presente los mensajes.
 
-##### Llamamos getHeroes desde ngOnInit()
-Podríamos llamar a `getHeroes()` desde el constructor pero no es una buena práctica.
+#### Crear MessageService
 
-Reserve el constructor para una inicialización simple, como asignar  parámetros del constructor a las propiedades. El constructor no debe hacer nada; menos aún, llamar a una función que realiza solicitudes HTTP a un servidor remoto como lo haría un servicio de datos real.
+`ng generate service message`
+
+Se debe modificar `MessageService` creandole dos métodos: uno para adicionar mensajes y otro para borrar todos los mensajes.
+
+El servicio expone su caché de mensajes y dos métodos: uno para agregar un mensaje al caché y otro para borrar el caché.
+
+#### Inyectar MessageService en HeroService
+En `HeroService` se debe importar `MessageService`.
+
+Igualmente, se debe modificar el constructor creándole un parámetro que declare una propiedad privada de `messageService`. Angular inyectará el servicio de mensajes singleton en esa propiedad cuando cree `HeroService`.
+
+Este es un escenario típico de "servicio en servicio": se inyecta `MessageService` en `HeroService` el cual, a su vez, se inyecta en `HeroesComponent`.
+
+#### Enviar un mensaje desde HeroService
+Modifica el método `HeroService.getHeroes()` para enviar un mensaje cuando se obtengan los héroes.
+
+#### Modificar MessageComponent para poder mostrar mensajes
+`MessagesComponent` debe mostrar todos los mensajes, incluido el mensaje enviado por `HeroService` cuando busca héroes.
+
+Abra `MessagesComponent` e importe el `MessageService`.
+
+Modifique el constructor con un parámetro que declare una propiedad `public messageService`. Angular inyectará el servicio de mensajes singleton en esa propiedad cuando cree el `MessagesComponent`.
+
+La propiedad messageService debe ser pública porque está a punto de enlazarla en la plantilla. Angular sólo enlaza a propiedades públicas de los componentes.
+
+#### Modificar la vista de MessageService para poder mostrar mensajes
+Esta plantilla se enlaza directamente al servicio de mensajes del componente.
+
+* `*ngIf` solo muestra el área de mensajes si hay mensajes para mostrar.
+
+* `*ngFor` presenta la lista de mensajes en elementos <div> repetidos.
+
+* Un enlace de evento Angular vincula el evento clic del botón a `MessageService.clear()`.
+
+Los mensajes se verán mejor cuando agregue los estilos de CSS privados a `messages.component.css` como se indica en una de las pestañas de "revisión final del código" a continuación.
+
+El navegador se actualiza y la página muestra la lista de héroes. Desplácese hasta la parte inferior para ver el mensaje del `HeroService` en el área de mensajes. Haga clic en el botón "clear" y el área de mensaje desaparecerá.
 
 ----
-`> ng serve --open`
+
+### Resumen
+
+* Se refactorizó el acceso de datos a la clase `HeroService`.
+* Se registró `HeroService` como proveedor de servicio a nivel `root` para que pueda ser inyectado en cualquier parte de la aplicación.
+* Se usó la inyección de dependencia de angular para inyectar el servicio en un componente.
+* Se le asignó al método que obtiene los datos en `HeroService` una firma asíncrona.
+* Conocimos las librerías `Observable` y `RxJS Observable`.
+* Usamos RxJS `of()` para devolver un observable de héroes simulados (`Observable<Hero[]>`).
+* Aprendimos que es mejor hacer llamadas desde `ngOnInit()` de un componente que desde el constructor.
+* Creamos un `MessageService` para la comunicación entre clases de manera debilmente acoplada.
+* El `HeroService` inyectado en un componente se crea con otro servicio inyectado, `MessageService`.
